@@ -1,1 +1,1 @@
-Project of ACGC.
+Project of CCF.
