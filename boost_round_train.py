@@ -69,13 +69,13 @@ class Training:
 
         from models.cross_validation import CrossValidation
 
-        if model_name == 'custom_cv':
+        if model_name == 'xgb':
             cv_args = {'valid_rate': 0.1,
                        'n_cv': 10,
-                       'cv_generator': CrossValidation.era_k_fold}
+                       'cv_generator': CrossValidation.sk_k_fold}
 
         else:
-            cv_args = {'valid_rate': 0.1,
+            cv_args = {'n_splits': 10,
                        'n_cv': 10}
             print('------------------------------------------------------')
             print('[W] Training with Base cv_args:\n', cv_args)
@@ -97,20 +97,6 @@ class Training:
                                       train_args=train_args, cv_args=cv_args)
             train_args['append_info'] = append_info
 
-    @staticmethod
-    def get_cv_weight(mode, start, stop):
-
-        from math import log
-
-        if mode == 'range':
-            cv_weights = list(range(start, stop))
-        elif mode == 'log':
-            cv_weights = [log(i/2 + 1) for i in range(start, stop)]
-        else:
-            cv_weights = [1 for _ in range(start, stop)]
-
-        return cv_weights
-
     def train(self):
         """
             ## Auto Train with Logs of Boost Round ##
@@ -119,19 +105,12 @@ class Training:
             'lr':           Logistic Regression
             'rf':           Random Forest
             'et':           Extra Trees
-            'ab':           AdaBoost
             'gb':           GradientBoosting
             'xgb':          XGBoost
             'xgb_sk':       XGBoost using scikit-learn module
             'lgb':          LightGBM
             'lgb_sk':       LightGBM using scikit-learn module
             'cb':           CatBoost
-            'dnn':          Deep Neural Networks
-            'stack_lgb':    LightGBM for stack layer
-            'christar':     Christar1991
-            'prejudge_b':   PrejudgeBinary
-            'prejudge_m':   PrejudgeMultiClass
-            'stack_t':      StackTree
         """
         TM = TrainingMode()
 
@@ -152,35 +131,23 @@ class Training:
         """
             Cross Validation Arguments
         """
-        # cv_args = {'n_valid': 4,
-        #            'n_cv': 20,
-        #            'n_era': 20}
+        # cv_args = {'n_splits': 10,
+        #            'n_cv': 10}
 
-        cv_args = self.get_cv_args('xgb_fw')
+        cv_args = self.get_cv_args('xgb')
 
         """
             Base Parameters
         """
-        base_parameters = self.get_base_params('xgb')
-
-        # base_parameters = None
+        # base_parameters = self.get_base_params('xgb')
+        base_parameters = None
 
         """
             Auto Train with Logs of Boost Round
         """
-        # cv_weights_range = [self.get_cv_weight('range', 1, i+1) for i in [5, 8, 10, 12, 15, 20]]
-        # cv_weights_log = [self.get_cv_weight('log', 1, i+1) for i in [5, 8, 10, 12, 15, 20]]
-        # n_cv_list = [5, 8, 10, 12, 15, 20] * 6
-        # import numpy as np
-        # valid_rate_list = np.array([[i]*6 for i in [0.075, 0.1, 0.125, 0.15, 0.175, 0.2]]).reshape(-1,).tolist()
-        # cv_weights_list = cv_weights_log*6
         pg_list = [
-                   # [['n_cv', (8, 9, 10), (11, 12, 13), [15], (18, 20)],
-                   #  ['valid_rate', (0.075, 0.1, 0.125, 0.15, 0.166, 0.175, 0.2)],
-                   #  ['window_size', (32, 34, 36, 40, 42, 44, 46, 48)]]
                    # [['n_cv', n_cv_list],
-                   #  ['valid_rate', valid_rate_list],
-                   #  ['cv_weights', cv_weights_list]]
+                   #  ['valid_rate', valid_rate_list]]
                    # [
                    #  ['max_depth', [11]],
                    #  ['min_child_weight', [9]],
@@ -192,17 +159,17 @@ class Training:
                    ]
         train_seed_list = [999]
         cv_seed_list = [95]
-        # TM.auto_train_boost_round('xgb', num_boost_round=100, n_epoch=1, full_grid_search=True,
-        #                           train_seed_list=train_seed_list, cv_seed_list=cv_seed_list,
-        #                           base_parameters=base_parameters, parameter_grid_list=pg_list, save_final_pred=False,
-        #                           train_args=train_args, cv_args=cv_args)
+        TM.auto_train_boost_round('xgb', num_boost_round=100, n_epoch=1, full_grid_search=True,
+                                  train_seed_list=train_seed_list, cv_seed_list=cv_seed_list,
+                                  base_parameters=base_parameters, parameter_grid_list=pg_list, save_final_pred=False,
+                                  train_args=train_args, cv_args=cv_args)
 
         """Train Different Rounds"""
-        num_boost_round_list = [83, 85, 87]
-        self.train_diff_round('xgb', TM, num_boost_round_list=num_boost_round_list, n_epoch=1, full_grid_search=True,
-                              train_seed_list=train_seed_list, cv_seed_list=cv_seed_list,
-                              base_parameters=base_parameters, parameter_grid_list=pg_list, save_final_pred=True,
-                              train_args=train_args, cv_args=cv_args)
+        # num_boost_round_list = [83, 85, 87]
+        # self.train_diff_round('xgb', TM, num_boost_round_list=num_boost_round_list, n_epoch=1, full_grid_search=True,
+        #                       train_seed_list=train_seed_list, cv_seed_list=cv_seed_list,
+        #                       base_parameters=base_parameters, parameter_grid_list=pg_list, save_final_pred=True,
+        #                       train_args=train_args, cv_args=cv_args)
 
 
 if __name__ == "__main__":

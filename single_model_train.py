@@ -59,131 +59,30 @@ class Training:
                                'verbosity': 1,
                                'early_stopping_rounds': 10000}
 
-        elif model_name == 'lgb_fi':
-            """
-                LGB Forward Increase
-            """
-            base_parameters = {'application': 'binary',
-                               'boosting': 'gbdt',
-                               'learning_rate': 0.003,
-                               'num_leaves': 88,
-                               'max_depth': 8,
-                               'min_data_in_leaf': 2500,
-                               'min_sum_hessian_in_leaf': 1e-3,
-                               'feature_fraction': 0.5,
-                               'feature_fraction_seed': 19,
-                               'bagging_fraction': 0.7,
-                               'bagging_freq': 9,
-                               'bagging_seed': 1,
-                               'lambda_l1': 0,
-                               'lambda_l2': 0,
-                               'min_gain_to_split': 0,
-                               'max_bin': 225,
-                               'min_data_in_bin': 5,
-                               'metric': 'binary_logloss',
-                               'num_threads': -1,
-                               'verbosity': 1,
-                               'early_stopping_rounds': 10000}
-
-        elif model_name == 'lgb_fw':
-            """
-               LGB Forward Window
-            """
-            base_parameters = {'application': 'binary',
-                               'boosting': 'gbdt',
-                               'learning_rate': 0.003,
-                               'num_leaves': 88,
-                               'max_depth': 8,
-                               'min_data_in_leaf': 2500,
-                               'min_sum_hessian_in_leaf': 1e-3,
-                               'feature_fraction': 0.5,
-                               'feature_fraction_seed': 19,
-                               'bagging_fraction': 0.5,
-                               'bagging_freq': 3,
-                               'bagging_seed': 1,
-                               'lambda_l1': 0,
-                               'lambda_l2': 0,
-                               'min_gain_to_split': 0,
-                               'max_bin': 225,
-                               'min_data_in_bin': 5,
-                               'metric': 'binary_logloss',
-                               'num_threads': -1,
-                               'verbosity': 1,
-                               'early_stopping_rounds': 10000}
-
         else:
+            print('------------------------------------------------------')
+            print('[W] Training without Base Parameters')
             base_parameters = None
 
         return base_parameters
 
-    def get_cv_args(self, model_name=None):
+    @staticmethod
+    def get_cv_args(model_name=None):
 
         from models.cross_validation import CrossValidation
 
-        if model_name == 'lgb_fi':
-            """
-                LGB Forward Increase
-            """
-            cv_weights = self.get_cv_weight('range', 1, 21)
-            cv_args = {'valid_rate': 0.125,
-                       'n_cv': 20,
-                       'n_era': 119,
-                       'cv_generator': CrossValidation.forward_increase,
-                       'cv_weights': cv_weights}
-
-        elif model_name == 'xgb_fi':
-            """
-                XGB Forward Increase
-            """
-            cv_weights = self.get_cv_weight('range', 1, 21)
-            cv_args = {'valid_rate': 0.125,
-                       'n_cv': 20,
-                       'n_era': 119,
-                       'cv_generator': CrossValidation.forward_increase,
-                       'cv_weights': cv_weights}
-
-        elif model_name == 'lgb_fw':
-            """
-               LGB Forward Window
-            """
+        if model_name == 'custom_cv':
             cv_args = {'valid_rate': 0.1,
                        'n_cv': 10,
-                       'n_era': 119,
-                       'cv_generator': CrossValidation.forward_window,
-                       'window_size': 40}
-
-        elif model_name == 'xgb_fw':
-            """
-                XGB Forward Window
-            """
-            cv_args = {'valid_rate': 0.1,
-                       'n_cv': 10,
-                       'n_era': 119,
-                       'cv_generator': CrossValidation.forward_window,
-                       'window_size': 40}
+                       'cv_generator': CrossValidation.sk_k_fold}
 
         else:
-            cv_args = {'n_valid': 27,
-                       'n_cv': 20,
-                       'n_era': 119}
+            cv_args = {'n_splits': 10,
+                       'n_cv': 10}
             print('------------------------------------------------------')
             print('[W] Training with Base cv_args:\n', cv_args)
 
         return cv_args
-
-    @staticmethod
-    def get_cv_weight(mode, start, stop):
-
-        from math import log
-
-        if mode == 'range':
-            cv_weights = list(range(start, stop))
-        elif mode == 'log':
-            cv_weights = [log(i / 2 + 1) for i in range(start, stop)]
-        else:
-            cv_weights = [1 for _ in range(start, stop)]
-
-        return cv_weights
 
     def train(self):
         """
@@ -193,19 +92,12 @@ class Training:
             'lr':           Logistic Regression
             'rf':           Random Forest
             'et':           Extra Trees
-            'ab':           AdaBoost
             'gb':           GradientBoosting
             'xgb':          XGBoost
             'xgb_sk':       XGBoost using scikit-learn module
             'lgb':          LightGBM
             'lgb_sk':       LightGBM using scikit-learn module
             'cb':           CatBoost
-            'dnn':          Deep Neural Networks
-            'stack_lgb':    LightGBM for stack layer
-            'christar':     Christar1991
-            'prejudge_b':   PrejudgeBinary
-            'prejudge_m':   PrejudgeMultiClass
-            'stack_t':      StackTree
         """
         TM = TrainingMode()
 
@@ -220,47 +112,36 @@ class Training:
         """
             Training Arguments
         """
-        train_args = {'prescale': False,
-                      'postscale': True,
-                      'use_scale_pos_weight': False,
-                      'use_global_valid': False,
+        train_args = {'use_global_valid': False,
                       'use_custom_obj': False,
                       'show_importance': False,
-                      'show_accuracy': False,
                       'save_final_pred': True,
                       'save_final_pred_train': False,
                       'save_cv_pred': False,
                       'save_cv_pred_train': False,
                       'save_csv_log': True,
-                      'append_info': 'fw_v0.2_c20_w35'}
+                      'loss_fuc': None,
+                      'append_info': 'forward_window_postscale_mdp-11_sub'}
 
         """
             Cross Validation Arguments
         """
-        # cv_args = {'n_valid': 4,
-        #            'n_cv': 20,
-        #            'n_era': 20}
+        # cv_args = {'n_splits': 10,
+        #            'n_cv': 10}
 
-        cv_args = self.get_cv_args('lgb_fi')
-
-        """
-            Reduced Features
-        """
-        reduced_feature_list = None
+        cv_args = self.get_cv_args('xgb')
 
         """
             Base Parameters
         """
-        base_parameters = self.get_base_params('lgb')
-
-        # base_parameters = None
+        # base_parameters = self.get_base_params('xgb')
+        base_parameters = None
 
         """
             Train Single Model
         """
         TM.train_single_model('lgb', train_seed, cv_seed, num_boost_round=100,
-                              reduced_feature_list=reduced_feature_list, base_parameters=base_parameters,
-                              train_args=train_args, cv_args=cv_args, use_multi_group=True)
+                              base_parameters=base_parameters, train_args=train_args, cv_args=cv_args)
 
         print('======================================================')
         print('Global Train Seed: {}'.format(train_seed))

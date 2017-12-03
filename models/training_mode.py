@@ -23,7 +23,7 @@ class TrainingMode:
             raise ValueError('Wrong Training Mode!')
 
         if model_name in ['lr', 'rf', 'et', 'ab', 'gb', 'xgb', 'xgb_sk',
-                          'lgb', 'lgb_sk', 'cb', 'dnn', 'stack_lgb']:
+                          'lgb', 'lgb_sk', 'cb', 'stack_lgb']:
 
             SM = SingleModel(**model_arg)
             train_functions = {'lr': SM.lr_train,
@@ -34,8 +34,7 @@ class TrainingMode:
                                'xgb_sk': SM.xgb_train_sklearn,
                                'lgb': SM.lgb_train,
                                'lgb_sk': SM.lgb_train_sklearn,
-                               'cb': SM.cb_train,
-                               'dnn': SM.dnn_tf_train}
+                               'cb': SM.cb_train}
 
             return train_functions[model_name]
 

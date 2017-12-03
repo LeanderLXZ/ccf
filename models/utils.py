@@ -445,15 +445,6 @@ def load_preprocessed_data_g(data_file_path):
     return x_g_train, x_g_test
 
 
-# Load Preprocessed Code ID
-def load_preprocessed_code_id(data_file_path):
-
-    code_id_train = pd.read_pickle(data_file_path + 'code_id_train.p')
-    code_id_test = pd.read_pickle(data_file_path + 'code_id_test.p')
-
-    return code_id_train, code_id_test
-
-
 # Print Information of Grid Search
 def print_grid_info(model_name, parameters, parameters_grid):
 

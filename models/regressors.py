@@ -294,7 +294,7 @@ class ModelBase(object):
                 utils.save_pred_to_csv(pred_path, self.id_test, pred_test_mean)
 
     def train(self, pred_path=None, loss_log_path=None, csv_log_path=None, boost_round_log_path=None,
-              train_seed=None, cv_args=None, parameters=None, show_importance=False, show_accuracy=False,
+              train_seed=None, cv_args=None, parameters=None, show_importance=False,
               save_cv_pred=True, save_cv_pred_train=False, save_final_pred=True, save_final_pred_train=False,
               save_csv_log=True, csv_idx=None, use_global_valid=False, return_pred_test=False,
               mode=None, param_name_list=None, param_value_list=None, use_custom_obj=False,
@@ -344,10 +344,10 @@ class ModelBase(object):
         if 'cv_generator' in cv_args_copy:
             cv_generator = cv_args_copy['cv_generator']
             if cv_generator is None:
-                cv_generator = CrossValidation.era_k_fold
+                cv_generator = CrossValidation.sk_k_fold
             cv_args_copy.pop('cv_generator')
         else:
-            cv_generator = CrossValidation.era_k_fold
+            cv_generator = CrossValidation.sk_k_fold
         print('------------------------------------------------------')
         print('[W] Using CV Generator: {}'.format(getattr(cv_generator, '__name__')))
 

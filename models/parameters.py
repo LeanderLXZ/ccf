@@ -1,9 +1,6 @@
 import preprocess
 from models.regressors import *
-from models import stacking
-from models import prejudge
 from models.sk_grid_search import SKLearnGridSearch
-from models.dnn import DeepNeuralNetworks
 
 
 pred_path = './results/'
@@ -477,42 +474,6 @@ class SingleModel:
             model = CatBoost(self.x_g_train, self.y_train, self.x_g_test, self.id_test, self.x_g_gl_valid, self.y_gl_valid)
         else:
             model = CatBoost(self.x_g_train, self.y_train, self.x_g_test, self.id_test)
-
-        self.train_model(model=model, grid_search_tuple_list=grid_search_tuple_list)
-
-    def dnn_tf_train(self, train_seed, cv_seed, parameters=None, epochs=None, grid_search_tuple_list=None):
-        """
-            Deep Neural Networks
-        """
-        if parameters is None:
-            parameters = {'version': '1.0',
-                          'epochs': 2,
-                          'unit_number': [256, 128, 64],
-                          'learning_rate': 0.0001,
-                          'keep_probability': 0.5,
-                          'batch_size': 128,
-                          'seed': train_seed,
-                          'display_step': 100,
-                          'save_path': dnn_checkpoint_path,
-                          'log_path': dnn_log_path}
-        else:
-            parameters['seed'] = train_seed
-
-        if epochs is not None:
-            parameters['epochs'] = epochs
-
-        file_name_params = ['epochs', 'unit_number', 'learning_rate', 'keep_probability', 'batch_size']
-
-        self.train_args['parameters'] = parameters
-        self.train_args['train_seed'] = train_seed
-        self.cv_args['cv_seed'] = cv_seed
-        self.train_args['file_name_params'] = file_name_params
-
-        if self.train_args['use_global_valid']:
-            model = DeepNeuralNetworks(self.x_train, self.y_train, self.x_test, self.id_test,
-                                       self.x_gl_valid, self.y_gl_valid, parameters=parameters)
-        else:
-            model = DeepNeuralNetworks(self.x_train, self.y_train, self.x_test, self.id_test, parameters=parameters)
 
         self.train_model(model=model, grid_search_tuple_list=grid_search_tuple_list)
 
