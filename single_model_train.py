@@ -69,9 +69,9 @@ class Training:
             """
             base_parameters = {'version': '1.0',
                                'epochs': 1,
-                               'unit_number': [64, 32],
-                               'learning_rate': 0.01,
-                               'keep_probability': 0.9,
+                               'unit_number': [128, 64, 32, 16, 8, 4],
+                               'learning_rate': 0.001,
+                               'keep_probability': 0.8,
                                'batch_size': 512,
                                'display_step': 100}
 
