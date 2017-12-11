@@ -100,7 +100,7 @@ class DeepNeuralNetworks(ModelBase):
 
             # x_shape = x_tensor.get_shape().as_list()
             # weights_initializer = tf.truncated_normal_initializer(stddev=1.0 / math.sqrt(x_shape[1]))
-            weights_initializer = tf.truncated_normal_initializer()
+            weights_initializer = tf.truncated_normal_initializer(5, 10)
             # weights_initializer = tf.contrib.layers.variance_scaling_initializer(factor=1.0, mode='FAN_IN',
             #                                                                      seed=self.train_seed)
             #  weights_initializer = tf.contrib.layers.xavier_initializer(dtype=tf.float32, seed=self.train_seed)
