@@ -331,7 +331,8 @@ class DeepNeuralNetworks(ModelBase):
 
             # Loss
             with tf.name_scope('Loss'):
-                cost_ = self.rmse_loss(logits, labels)
+                # cost_ = self.rmse_loss(logits, labels)
+                cost_ = tf.reduce_mean(tf.square(logits - labels))
 
             # Optimizer
             optimizer = tf.train.AdamOptimizer(lr).minimize(cost_)
