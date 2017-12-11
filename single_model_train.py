@@ -68,9 +68,9 @@ class Training:
                 DNN
             """
             base_parameters = {'version': '1.0',
-                               'epochs': 10000,
-                               'unit_number': [32],
-                               'learning_rate': 0.01,
+                               'epochs': 1000,
+                               'unit_number': [256],
+                               'learning_rate': 0.001,
                                'keep_probability': 1.0,
                                'batch_size': 512,
                                'display_step': 100}

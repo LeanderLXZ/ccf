@@ -64,8 +64,6 @@ class SingleModel:
         for row in self.x_train:
             row[8] = (row[8] - la_min) / la_range
 
-        print(self.x_train[0], self.y_train[:100])
-
         self.x_g_train, self.x_g_test = \
             utils.load_preprocessed_data_g(preprocessed_data_path)
 
