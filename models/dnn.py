@@ -67,25 +67,30 @@ class DeepNeuralNetworks(ModelBase):
 
         with tf.name_scope(layer_name):
 
-            # x_shape = x_tensor.get_shape().as_list()
-            # weights_initializer = tf.truncated_normal_initializer(stddev=1.0 / math.sqrt(x_shape[1]))
-            weights_initializer = tf.truncated_normal_initializer()
+            x_shape = x_tensor.get_shape().as_list()
+            weights_initializer = tf.truncated_normal_initializer(stddev=1.0 / math.sqrt(x_shape[1]))
+            # weights_initializer = tf.truncated_normal_initializer()
             # weights_initializer = tf.contrib.layers.variance_scaling_initializer(factor=1.0, mode='FAN_IN',
             #                                                                      seed=self.train_seed)
             #  weights_initializer = tf.contrib.layers.xavier_initializer(dtype=tf.float32, seed=self.train_seed)
             #  weights_reg = tf.contrib.layers.l1_regularizer(1e-3)
             #  normalizer_fn = tf.contrib.layers.batch_norm
             #  normalizer_params = {'is_training': is_training}
+            #
+            # fc = tf.contrib.layers.fully_connected(inputs=x_tensor,
+            #                                        num_outputs=num_outputs,
+            #                                        activation_fn=tf.nn.sigmoid,
+            #                                        weights_initializer=weights_initializer,
+            #                                        #  weights_regularizer=weights_reg,
+            #                                        #  normalizer_fn=normalizer_fn,
+            #                                        #  normalizer_params=normalizer_params,
+            #                                        biases_initializer=tf.zeros_initializer(dtype=tf.float32)
+            #                                        )
 
-            fc = tf.contrib.layers.fully_connected(inputs=x_tensor,
-                                                   num_outputs=num_outputs,
-                                                   activation_fn=tf.nn.sigmoid,
-                                                   weights_initializer=weights_initializer,
-                                                   #  weights_regularizer=weights_reg,
-                                                   #  normalizer_fn=normalizer_fn,
-                                                   #  normalizer_params=normalizer_params,
-                                                   biases_initializer=tf.zeros_initializer(dtype=tf.float32)
-                                                   )
+            fc = tf.layers.dense(inputs=x_tensor,
+                                 units=num_outputs,
+                                 activation=tf.nn.sigmoid,
+                                 kernel_initializer=weights_initializer)
 
             tf.summary.histogram('fc_layer', fc)
 
@@ -98,19 +103,24 @@ class DeepNeuralNetworks(ModelBase):
 
         with tf.name_scope(layer_name):
 
-            # x_shape = x_tensor.get_shape().as_list()
-            # weights_initializer = tf.truncated_normal_initializer(stddev=1.0 / math.sqrt(x_shape[1]))
-            weights_initializer = tf.truncated_normal_initializer(5, 10)
+            x_shape = x_tensor.get_shape().as_list()
+            weights_initializer = tf.truncated_normal_initializer(stddev=1.0 / math.sqrt(x_shape[1]))
+            # weights_initializer = tf.truncated_normal_initializer()
             # weights_initializer = tf.contrib.layers.variance_scaling_initializer(factor=1.0, mode='FAN_IN',
             #                                                                      seed=self.train_seed)
             #  weights_initializer = tf.contrib.layers.xavier_initializer(dtype=tf.float32, seed=self.train_seed)
 
-            out = tf.contrib.layers.fully_connected(inputs=x_tensor,
-                                                    num_outputs=num_outputs,
-                                                    activation_fn=None,
-                                                    weights_initializer=weights_initializer,
-                                                    biases_initializer=tf.zeros_initializer(dtype=tf.float32)
-                                                    )
+            # out = tf.contrib.layers.fully_connected(inputs=x_tensor,
+            #                                         num_outputs=num_outputs,
+            #                                         activation_fn=None,
+            #                                         weights_initializer=weights_initializer,
+            #                                         biases_initializer=tf.zeros_initializer(dtype=tf.float32)
+            #                                         )
+
+            out = tf.layers.dense(inputs=x_tensor,
+                                  units=num_outputs,
+                                  activation=None,
+                                  kernel_initializer=weights_initializer)
 
         return out
 
