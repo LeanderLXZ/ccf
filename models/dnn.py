@@ -219,19 +219,11 @@ class DeepNeuralNetworks(ModelBase):
 
                     idx += 1
 
-                    summary_train, cost_train = sess.run([merged, cost_],
-                                                         {inputs: batch_x,
-                                                          labels: batch_y,
-                                                          keep_prob: 1.0,
-                                                          is_training: False})
-                    train_writer.add_summary(summary_train, batch_counter)
-
                     cost_valid_all = []
+                    cost_train_all = []
 
-                    for iii, (valid_batch_x,
-                              valid_batch_y) in enumerate(self.get_batches(x_valid,
-                                                                           y_valid,
-                                                                           self.batch_size)):
+                    for valid_batch_x, valid_batch_y in self.get_batches(x_valid, y_valid, self.batch_size):
+
                         summary_valid_i, cost_valid_i = sess.run([merged, cost_],
                                                                  {inputs: valid_batch_x,
                                                                   labels: valid_batch_y,
@@ -243,6 +235,19 @@ class DeepNeuralNetworks(ModelBase):
                         cost_valid_all.append(cost_valid_i)
 
                     cost_valid = sum(cost_valid_all) / len(cost_valid_all)
+
+                    for train_batch_x, train_batch_y in self.get_batches(x_train, y_train, self.batch_size):
+                        summary_train_i, cost_train_i = sess.run([merged, cost_],
+                                                                 {inputs: train_batch_x,
+                                                                  labels: train_batch_y,
+                                                                  keep_prob: 1.0,
+                                                                  is_training: False})
+
+                        train_writer.add_summary(summary_train_i, batch_counter)
+
+                        cost_train_all.append(cost_train_i)
+
+                    cost_train = sum(cost_train_all) / len(cost_train_all)
 
                     total_time = time.time() - start_time
 
