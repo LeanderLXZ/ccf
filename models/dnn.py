@@ -4,7 +4,6 @@ import re
 import sys
 import copy
 import numpy as np
-import scipy as sp
 import tensorflow as tf
 from os.path import isdir
 from models.regressors import ModelBase
@@ -131,10 +130,8 @@ class DeepNeuralNetworks(ModelBase):
     # LogLoss
     @staticmethod
     def rmse_loss(logit, y):
-        print(logit)
-        print(logit.get_shape().as_list())
 
-        return sp.sqrt(sp.mean((np.array(logit) - y) ** 2))
+        return tf.sqrt(tf.reduce_mean(tf.square(logit - y)))
 
     # Get Batches
     @staticmethod

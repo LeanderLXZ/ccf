@@ -85,14 +85,13 @@ class Training:
         """
             Base Parameters
         """
-        # base_parameters = self.get_base_params('xgb')
-        base_parameters = None
+        base_parameters = get_base_params('dnn')
 
         """
             Auto Train with Logs of Boost Round
         """
         pg_list = [
-            [['learning_rate', [0.15]]]
+            [['learning_rate', [0.05]]]
             ]
         train_seed_list = [68]
         cv_seed_list = [95]
@@ -159,14 +158,14 @@ def get_base_params(model_name=None):
 
     elif model_name == 'dnn':
         """
-            LGB
+            DNN
         """
         base_parameters = {'version': '1.0',
                            'epochs': 2,
-                           'unit_number': [256, 128, 64],
-                           'learning_rate': 0.0001,
+                           'unit_number': [16, 8, 4],
+                           'learning_rate': 0.01,
                            'keep_probability': 0.5,
-                           'batch_size': 128,
+                           'batch_size': 256,
                            'display_step': 100}
 
     else:
@@ -175,6 +174,9 @@ def get_base_params(model_name=None):
         base_parameters = None
 
     return base_parameters
+
+
+
 
 
 if __name__ == "__main__":
