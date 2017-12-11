@@ -11,7 +11,7 @@ class Training:
 
     @staticmethod
     def rmse(y_prob, y):
-        return sp.sqrt(sp.mean(sp.square(y_prob - y)))
+        return sp.sqrt(sp.mean((y_prob - y) ** 2))
 
     @staticmethod
     def get_cv_args(model_name=None):
