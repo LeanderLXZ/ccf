@@ -344,10 +344,10 @@ class ModelBase(object):
         if 'cv_generator' in cv_args_copy:
             cv_generator = cv_args_copy['cv_generator']
             if cv_generator is None:
-                cv_generator = CrossValidation.sk_k_fold
+                cv_generator = CrossValidation.random_split
             cv_args_copy.pop('cv_generator')
         else:
-            cv_generator = CrossValidation.sk_k_fold
+            cv_generator = CrossValidation.random_split
         print('------------------------------------------------------')
         print('[W] Using CV Generator: {}'.format(getattr(cv_generator, '__name__')))
 
