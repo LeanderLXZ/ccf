@@ -53,7 +53,19 @@ class SingleModel:
 
         self.x_train, self.y_train,  self.x_test, self.id_test = \
             utils.load_preprocessed_data(preprocessed_data_path)
+        lo_max = np.max(self.x_train[:, 7])
+        lo_min = np.min(self.x_train[:, 7])
+        lo_range = lo_max - lo_min
+        for row in self.x_train:
+            row[7] = (row[7] - lo_min) / lo_range
+        la_max = np.max(self.x_train[:, 8])
+        la_min = np.min(self.x_train[:, 8])
+        la_range = la_max - la_min
+        for row in self.x_train:
+            row[8] = (row[8] - la_min) / la_range
+
         print(self.x_train[0], self.y_train[:100])
+
         self.x_g_train, self.x_g_test = \
             utils.load_preprocessed_data_g(preprocessed_data_path)
 
