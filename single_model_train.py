@@ -68,11 +68,11 @@ class Training:
                 DNN
             """
             base_parameters = {'version': '1.0',
-                               'epochs': 2,
-                               'unit_number': [6],
-                               'learning_rate': 0.25,
+                               'epochs': 10000,
+                               'unit_number': [32],
+                               'learning_rate': 0.01,
                                'keep_probability': 1.0,
-                               'batch_size': 128,
+                               'batch_size': 512,
                                'display_step': 100}
 
         else:
@@ -134,7 +134,8 @@ class Training:
         """
             Train Single Model
         """
-        TM.train_single_model('dnn', train_seed, cv_seed, num_boost_round=1000,
+        TM.train_single_model('dnn', train_seed, cv_seed,
+                              # num_boost_round=1000,
                               base_parameters=base_parameters, train_args=train_args, cv_args=cv_args)
 
         print('======================================================')
