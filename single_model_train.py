@@ -69,10 +69,10 @@ class Training:
             """
             base_parameters = {'version': '1.0',
                                'epochs': 2,
-                               'unit_number': [16, 8, 4],
-                               'learning_rate': 0.01,
-                               'keep_probability': 0.5,
-                               'batch_size': 256,
+                               'unit_number': [6],
+                               'learning_rate': 0.25,
+                               'keep_probability': 1.0,
+                               'batch_size': 128,
                                'display_step': 100}
 
         else:
@@ -134,7 +134,7 @@ class Training:
         """
             Train Single Model
         """
-        TM.train_single_model('dnn', train_seed, cv_seed, num_boost_round=10,
+        TM.train_single_model('dnn', train_seed, cv_seed, num_boost_round=1000,
                               base_parameters=base_parameters, train_args=train_args, cv_args=cv_args)
 
         print('======================================================')
