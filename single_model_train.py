@@ -1,6 +1,6 @@
 import random
 import time
-
+import scipy as sp
 from models import utils, parameters
 from models.training_mode import TrainingMode
 
@@ -9,6 +9,10 @@ class Training:
 
     def __init__(self):
         pass
+
+    @staticmethod
+    def rmse(y_prob, y):
+        return sp.sqrt(sp.mean((y_prob - y) ** 2))
 
     @staticmethod
     def get_base_params(model_name=None):
@@ -59,30 +63,24 @@ class Training:
                                'verbosity': 1,
                                'early_stopping_rounds': 10000}
 
+        elif model_name == 'dnn':
+            """
+                DNN
+            """
+            base_parameters = {'version': '1.0',
+                               'epochs': 2,
+                               'unit_number': [16, 8, 4],
+                               'learning_rate': 0.01,
+                               'keep_probability': 0.5,
+                               'batch_size': 256,
+                               'display_step': 100}
+
         else:
             print('------------------------------------------------------')
             print('[W] Training without Base Parameters')
             base_parameters = None
 
         return base_parameters
-
-    @staticmethod
-    def get_cv_args(model_name=None):
-
-        from models.cross_validation import CrossValidation
-
-        if model_name == 'custom_cv':
-            cv_args = {'valid_rate': 0.1,
-                       'n_cv': 10,
-                       'cv_generator': CrossValidation.sk_k_fold}
-
-        else:
-            cv_args = {'n_splits': 10,
-                       'n_cv': 10}
-            print('------------------------------------------------------')
-            print('[W] Training with Base cv_args:\n', cv_args)
-
-        return cv_args
 
     def train(self):
         """
@@ -117,30 +115,26 @@ class Training:
                       'show_importance': False,
                       'save_final_pred': True,
                       'save_final_pred_train': False,
-                      'save_cv_pred': False,
+                      'save_cv_pred': True,
                       'save_cv_pred_train': False,
                       'save_csv_log': True,
-                      'loss_fuc': None,
-                      'append_info': 'forward_window_postscale_mdp-11_sub'}
+                      'loss_fuc': self.rmse,
+                      'append_info': 'Yuanan Bike'}
 
         """
             Cross Validation Arguments
         """
-        # cv_args = {'n_splits': 10,
-        #            'n_cv': 10}
-
-        cv_args = self.get_cv_args('xgb')
+        cv_args = {'n_cv': 10}
 
         """
             Base Parameters
         """
-        # base_parameters = self.get_base_params('xgb')
-        base_parameters = None
+        base_parameters = self.get_base_params('dnn')
 
         """
             Train Single Model
         """
-        TM.train_single_model('lgb', train_seed, cv_seed, num_boost_round=100,
+        TM.train_single_model('dnn', train_seed, cv_seed, num_boost_round=10,
                               base_parameters=base_parameters, train_args=train_args, cv_args=cv_args)
 
         print('======================================================')

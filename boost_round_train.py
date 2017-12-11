@@ -46,6 +46,74 @@ class Training:
                                       train_args=train_args, cv_args=cv_args)
             train_args['append_info'] = append_info
 
+    @staticmethod
+    def get_base_params(model_name=None):
+        """
+            Get Base Parameters
+        """
+        if model_name == 'xgb':
+            """
+                XGB
+            """
+            base_parameters = {'learning_rate': 0.003,
+                               'gamma': 0.001,
+                               'max_depth': 10,
+                               'min_child_weight': 8,
+                               'subsample': 0.92,
+                               'colsample_bytree': 0.85,
+                               'colsample_bylevel': 0.7,
+                               'lambda': 0,
+                               'alpha': 0,
+                               'early_stopping_rounds': 10000,
+                               'n_jobs': -1,
+                               'objective': 'reg:linear',
+                               'eval_metric': 'rmse'}
+
+        elif model_name == 'lgb':
+            """
+                LGB
+            """
+            base_parameters = {'application': 'regression',
+                               'boosting': 'gbdt',
+                               'learning_rate': 0.003,
+                               'num_leaves': 88,
+                               'max_depth': 9,
+                               'min_data_in_leaf': 2500,
+                               'min_sum_hessian_in_leaf': 1e-3,
+                               'feature_fraction': 0.6,
+                               'feature_fraction_seed': 19,
+                               'bagging_fraction': 0.8,
+                               'bagging_freq': 5,
+                               'bagging_seed': 1,
+                               'lambda_l1': 0,
+                               'lambda_l2': 0,
+                               'min_gain_to_split': 0,
+                               'max_bin': 225,
+                               'min_data_in_bin': 5,
+                               'metric': 'l2_root',
+                               'num_threads': -1,
+                               'verbosity': 1,
+                               'early_stopping_rounds': 10000}
+
+        elif model_name == 'dnn':
+            """
+                DNN
+            """
+            base_parameters = {'version': '1.0',
+                               'epochs': 2,
+                               'unit_number': [16, 8, 4],
+                               'learning_rate': 0.01,
+                               'keep_probability': 0.5,
+                               'batch_size': 256,
+                               'display_step': 100}
+
+        else:
+            print('------------------------------------------------------')
+            print('[W] Training without Base Parameters')
+            base_parameters = None
+
+        return base_parameters
+
     def train(self):
         """
             ## Auto Train with Logs of Boost Round ##
@@ -85,7 +153,7 @@ class Training:
         """
             Base Parameters
         """
-        base_parameters = get_base_params('dnn')
+        base_parameters = self.get_base_params('dnn')
 
         """
             Auto Train with Logs of Boost Round
@@ -106,77 +174,6 @@ class Training:
         #                       train_seed_list=train_seed_list, cv_seed_list=cv_seed_list,
         #                       base_parameters=base_parameters, parameter_grid_list=pg_list, save_final_pred=True,
         #                       train_args=train_args, cv_args=cv_args)
-
-
-def get_base_params(model_name=None):
-    """
-        Get Base Parameters
-    """
-    if model_name == 'xgb':
-        """
-            XGB
-        """
-        base_parameters = {'learning_rate': 0.003,
-                           'gamma': 0.001,
-                           'max_depth': 10,
-                           'min_child_weight': 8,
-                           'subsample': 0.92,
-                           'colsample_bytree': 0.85,
-                           'colsample_bylevel': 0.7,
-                           'lambda': 0,
-                           'alpha': 0,
-                           'early_stopping_rounds': 10000,
-                           'n_jobs': -1,
-                           'objective': 'reg:linear',
-                           'eval_metric': 'rmse'}
-
-    elif model_name == 'lgb':
-        """
-            LGB
-        """
-        base_parameters = {'application': 'regression',
-                           'boosting': 'gbdt',
-                           'learning_rate': 0.003,
-                           'num_leaves': 88,
-                           'max_depth': 9,
-                           'min_data_in_leaf': 2500,
-                           'min_sum_hessian_in_leaf': 1e-3,
-                           'feature_fraction': 0.6,
-                           'feature_fraction_seed': 19,
-                           'bagging_fraction': 0.8,
-                           'bagging_freq': 5,
-                           'bagging_seed': 1,
-                           'lambda_l1': 0,
-                           'lambda_l2': 0,
-                           'min_gain_to_split': 0,
-                           'max_bin': 225,
-                           'min_data_in_bin': 5,
-                           'metric': 'l2_root',
-                           'num_threads': -1,
-                           'verbosity': 1,
-                           'early_stopping_rounds': 10000}
-
-    elif model_name == 'dnn':
-        """
-            DNN
-        """
-        base_parameters = {'version': '1.0',
-                           'epochs': 2,
-                           'unit_number': [16, 8, 4],
-                           'learning_rate': 0.01,
-                           'keep_probability': 0.5,
-                           'batch_size': 256,
-                           'display_step': 100}
-
-    else:
-        print('------------------------------------------------------')
-        print('[W] Training without Base Parameters')
-        base_parameters = None
-
-    return base_parameters
-
-
-
 
 
 if __name__ == "__main__":
