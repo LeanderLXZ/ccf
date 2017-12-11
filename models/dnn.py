@@ -62,9 +62,6 @@ class DeepNeuralNetworks(ModelBase):
     # Full Connected Layer
     def fc_layer(self, x_tensor, layer_name, num_outputs, keep_prob, is_training):
 
-        if is_training is True:
-            print('Using Batch Normalization')
-
         x_shape = x_tensor.get_shape().as_list()
         weights_initializer = tf.truncated_normal_initializer(stddev=1.0 / math.sqrt(x_shape[1]))
         # weights_initializer = tf.truncated_normal_initializer()
@@ -89,6 +86,8 @@ class DeepNeuralNetworks(ModelBase):
                              units=num_outputs,
                              activation=tf.nn.sigmoid,
                              kernel_initializer=weights_initializer)
+
+        tf.summary.histogram('fc_layer', fc)
 
         # fc = tf.nn.dropout(fc, keep_prob)
 
