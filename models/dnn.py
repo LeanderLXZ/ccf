@@ -200,9 +200,7 @@ class DeepNeuralNetworks(ModelBase):
 
         for epoch_i in range(self.epochs):
 
-            for batch_i, (batch_x, batch_y, batch_w) in enumerate(self.get_batches(x_train,
-                                                                                   y_train,
-                                                                                   self.batch_size)):
+            for batch_i, (batch_x, batch_y) in enumerate(self.get_batches(x_train, y_train, self.batch_size)):
 
                 batch_counter += 1
 
@@ -230,8 +228,7 @@ class DeepNeuralNetworks(ModelBase):
                     cost_valid_all = []
 
                     for iii, (valid_batch_x,
-                              valid_batch_y,
-                              valid_batch_w) in enumerate(self.get_batches(x_valid,
+                              valid_batch_y) in enumerate(self.get_batches(x_valid,
                                                                            y_valid,
                                                                            self.batch_size)):
                         summary_valid_i, cost_valid_i = sess.run([merged, cost_],
